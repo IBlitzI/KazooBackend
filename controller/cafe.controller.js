@@ -6,6 +6,13 @@ const baseResponse = require("../dto/baseResponse.dto");
 
 exports.create = async (req, res) => {
   try {
+    const isInvalid = utils.helpers.handleValidation(req);
+    if (isInvalid) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ ...baseResponse, ...isInvalid });
+      return;
+    }
     const newCafe = new Cafe({
       name: req.body.name,
       location: req.body.location,
@@ -40,6 +47,13 @@ exports.create = async (req, res) => {
 
 exports.addSongToPlaylist = async (req, res) => {
   try {
+    const isInvalid = utils.helpers.handleValidation(req);
+    if (isInvalid) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ ...baseResponse, ...isInvalid });
+      return;
+    }
     const cafe = await Cafe.findById(req.body.cafeId);
     if (!cafe) {
       let error = new Error("Cafe bulunamadı");
@@ -85,7 +99,3 @@ exports.addSongToPlaylist = async (req, res) => {
     });
   }
 };
-
-
-  
-

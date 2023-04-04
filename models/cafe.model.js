@@ -23,14 +23,14 @@ const cafeSchema = new mongoose.Schema({
   playlist: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Song"
+      ref: "Song",
     },
   ],
   votes: [
     {
       user: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       song: { type: mongoose.Schema.Types.ObjectId, ref: "Song" },
-      vote : {type : Number}
+      vote: { type: Number },
     },
   ],
   created: {
