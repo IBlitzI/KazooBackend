@@ -3,7 +3,7 @@ require("dotenv").config();
 const youtubes = youtube({
   version: 'v3',
   auth: '',
-});t
+});
 
 const searchMusicByName = async (query) => {
     const res = await youtubes.search.list({
@@ -46,7 +46,7 @@ const searchMusicByName = async (query) => {
 //     const results = await searchMusicByName(id);
 //     console.log(results); // API'den dönen sonuçları burada kullanabilirsiniz
 //   }
-  getMusicResults('MRkra0nVkYk');
+//  getMusicResults('MRkra0nVkYk');
 //   getMusicResultsName('masal gibi')
   
 

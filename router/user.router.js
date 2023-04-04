@@ -9,5 +9,5 @@ router.post("/login", [middlewares.loggerMiddleware], controller.login);
 router.delete("/logout", controller.logout);
 
 module.exports = {
-  userRouter: router,s
+  userRouter: router
 };
