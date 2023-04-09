@@ -11,6 +11,7 @@ app.use('/cafe', router.cafeRouter.cafeRouter)
 app.use('/song', router.songRouter.songRouter)
 app.use('/vote', router.voteRouter.voteRouter)
 
+
 const db = require('./db/mongoose.connection');
 db.connectToMongoDb()
 

@@ -31,33 +31,36 @@ exports.vote = async function voteForSong(req, res) {
       return;
     }
 
-    const votedSong = cafe.votes.findIndex(
+    votedSong = cafe.votes.findIndex(
       (vote) => vote.song.toString() === req.body.songId
     );
-    votedUser = cafe.votes[votedSong].user.findIndex(
-      (vote) => vote._id.toString() === req.body.userId
-    );
-    if (votedUser === -1 && votedSong !== -1) {
-      cafe.votes[votedSong].user.push(req.body.userId);
-      cafe.votes[votedSong].vote++;
-    } else if (votedUser === -1 && votedSong === -1) {
+    
+    if (votedSong !== -1) {
+      votedUser = cafe.votes[votedSong].user.findIndex(
+        (user) => user._id.toString() === req.body.userId
+      );
+      if (votedUser === -1) {
+        cafe.votes[votedSong].user.push(req.body.userId);
+        cafe.votes[votedSong].vote++;
+      } else {
+        let error = new Error("Kullanıcı Zaten Oy Vermiş");
+        utils.helpers.logToError(error, req, "Şarkı Oy Vermede Bir Hata Oluştu");
+        res.status(StatusCodes.BAD_REQUEST).json({
+          ...baseResponse,
+          success: false,
+          error: true,
+          timestamp: Date.now(),
+          message: error.message,
+          code: StatusCodes.BAD_REQUEST,
+        });
+        return;
+      }
+    } else {
       cafe.votes.push({
-        user: req.body.userId,
+        user: [req.body.userId],
         song: req.body.songId,
         vote: 1,
       });
-    } else {
-      let error = new Error("Kullanıcı Zaten Oy Vermiş");
-      utils.helpers.logToError(error, req, "Şarkı Oy Vermede Bir Hata Oluştu");
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...baseResponse,
-        success: false,
-        error: true,
-        timestamp: Date.now(),
-        message: error.message,
-        code: StatusCodes.BAD_REQUEST,
-      });
-      return;
     }
 
     await cafe.save();
