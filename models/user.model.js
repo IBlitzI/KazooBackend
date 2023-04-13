@@ -19,7 +19,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
@@ -27,13 +27,19 @@ const userSchema = new Schema({
   },
   created: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   favorites: [
     {
       name: String,
       url: String,
-    }]
+      
+    },
+  ],
+  vote:{
+    type: Number,
+    default: 0
+  }
 });
 const User = mongoose.model("User", userSchema, "User");
 module.exports = User;

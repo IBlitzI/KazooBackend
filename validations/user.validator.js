@@ -10,30 +10,14 @@ const UserValidator = {
         .matches(/^\w+$/)
         .withMessage(
           "Username should only contain alphanumeric characters and underscores"
-        )
-        .bail()
-        .custom(async (value, { req }) => {
-          const user = await req.db.User.findOne({ username: value });
-          if (user) {
-            throw new Error("Username already exists");
-          }
-          return true;
-        }),
+        ),
       body("firstName").notEmpty().withMessage("First name is required"),
       body("lastName").notEmpty().withMessage("Last name is required"),
       body("email")
         .notEmpty()
         .withMessage("Email is required")
         .isEmail()
-        .withMessage("Invalid email format")
-        .bail()
-        .custom(async (value, { req }) => {
-          const user = await req.db.User.findOne({ email: value });
-          if (user) {
-            throw new Error("Email already exists");
-          }
-          return true;
-        }),
+        .withMessage("Invalid email format"),
       body("password")
         .notEmpty()
         .withMessage("Password is required")

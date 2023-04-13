@@ -5,7 +5,9 @@ const middlewares = require("../middlewares/index");
 const validator = require("../validations/user.validator");
 
 
-router.post("/vote", [middlewares.authMiddleware], controller.vote);
+router.post("/vote", controller.vote);
+router.post("/mostvoted", controller.mostVoted);
+router.post("/listall", controller.listAllSongsByVotes);
 
 module.exports = {
   voteRouter: router,

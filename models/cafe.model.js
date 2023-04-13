@@ -13,6 +13,10 @@ const cafeSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   menu: [
     {
       name: String,
@@ -20,23 +24,25 @@ const cafeSchema = new mongoose.Schema({
       description: String,
     },
   ],
-  playlist: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Song",
-    },
-  ],
   votes: [
     {
       user: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       song: { type: mongoose.Schema.Types.ObjectId, ref: "Song" },
-      vote: { type: Number },
+      vote: { type: Number ,default :0},
     },
   ],
+  qrCode: {
+    data: { type: Buffer, required: false },
+    contentType: { type: String, required: false }
+  },
   created: {
     type: Date,
     default: Date.now,
   },
+  image: {
+    data: { type: Buffer, required: false },
+    contentType: { type: String, required: false }
+  }
 });
 
 const Cafe = mongoose.model("Cafe", cafeSchema, "Cafe");

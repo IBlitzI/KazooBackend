@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const utils = require("../utils/index");
 const baseResponse = require("../dto/baseResponse.dto");
 
+
 exports.create = async (req, res) => {
   try {
     const isInvalid = utils.helpers.handleValidation(req);
@@ -13,17 +14,21 @@ exports.create = async (req, res) => {
         .json({ ...baseResponse, ...isInvalid });
       return;
     }
+    const cafeImage = req.file.buffer;
     const newCafe = new Cafe({
       name: req.body.name,
       location: req.body.location,
-      playlist: req.body.playlist,
+      image: { data: cafeImage, contentType: req.file.mimetype },
     });
-
+    const votesArr = JSON.parse(req.body.playlist);
+    votesArr.forEach(async (song) => {
+      newCafe.votes.push({ user: [], song, vote: 0 });
+    });
     await newCafe.save();
 
     res.status(StatusCodes.OK).json({
       ...baseResponse,
-      data: newCafe,
+      data: newCafe.id,
       success: true,
       timestamp: Date.now(),
       code: StatusCodes.OK,
@@ -56,7 +61,7 @@ exports.addSongToPlaylist = async (req, res) => {
     }
     const cafe = await Cafe.findById(req.body.cafeId);
     if (!cafe) {
-      let error = new Error("Cafe bulunamadı");
+      let error = new Error("Cafe bulunamadı");x
       utils.helpers.logToError(
         error,
         req,
@@ -73,7 +78,11 @@ exports.addSongToPlaylist = async (req, res) => {
       return;
     }
 
-    cafe.playlist.push(req.body.songId);
+    cafe.votes.push({
+      user: [],
+      song: req.body.songId,
+      vote: 0,
+    });
     await cafe.save();
 
     res.status(StatusCodes.OK).json({
