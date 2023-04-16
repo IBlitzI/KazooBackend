@@ -1,6 +1,6 @@
-const logger = require('./logger')
-const helpers = require('./helper')
+const logger = require("./logger");
+const helpers = require("./helper");
 module.exports = {
-    logger,
-    helpers
-}
+  logger,
+  helpers,
+};

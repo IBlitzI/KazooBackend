@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 exports.connectToMongoDb = async() => {
     try {
-        await mongoose.connect("mongodb://0.0.0.0:27017/Kazoo", {
+        await mongoose.connect("mongodb+srv://mustafa:gUgzcLquDnibFChV@kazoo.8jqi0r5.mongodb.net/?retryWrites=true&w=majority", {
             compressors: "zlib",
             autoIndex: true,
             connectTimeoutMS: 5000
