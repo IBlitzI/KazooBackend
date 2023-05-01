@@ -2,7 +2,6 @@ const { body } = require("express-validator");
 const CafeValidator = {
   validateCafe() {
     return [
-      body("name").notEmpty().withMessage("Cafe name is required"),
       body("location")
         .optional({ nullable: true })
         .isString()
@@ -20,8 +19,7 @@ const CafeValidator = {
       body("menu.*.description")
         .isString()
         .withMessage("Menu item description should be a string"),
-      body("playlist").isArray().withMessage("Playlist should be an array"),
-      body("playlist.*").isMongoId().withMessage("Invalid song ID in playlist"),
+      body("playlist.*").isMongoId().withMessage("Invalid song ID in playlist")
     ];
   },
 };

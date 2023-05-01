@@ -6,7 +6,6 @@ const validator = require("../validations/user.validator");
 
 
 router.post("/vote", controller.vote);
-router.post("/mostvoted", controller.mostVoted);
 router.post("/listall", controller.listAllSongsByVotes);
 
 module.exports = {

@@ -1,25 +1,13 @@
-const { body } = require("express-validator");
+const { body } = require('express-validator');
+
 const SongValidator = {
   validateSong() {
     return [
-      body("name")
-        .trim()
-        .notEmpty()
-        .withMessage("Name is required.")
-        .isLength({ max: 100 })
-        .withMessage("Name should be maximum 100 characters long."),
-      body("artist")
-        .trim()
-        .notEmpty()
-        .withMessage("Artist name is required.")
-        .isLength({ max: 100 })
-        .withMessage("Artist name should be maximum 100 characters long."),
-      body("url")
-        .trim()
-        .notEmpty()
-        .withMessage("Song URL is required.")
-        .isURL()
-        .withMessage("Please provide a valid URL."),
+      body('name').notEmpty().withMessage('Name field is required'),
+      body('artist').optional().notEmpty().withMessage('Artist field should not be empty'),
+      body('url').notEmpty().withMessage('URL field is required'),
+      body('thumbnail').notEmpty().withMessage('Thumbnail field is required'),
+      body('videoId').notEmpty().withMessage('Video ID field is required'),
     ];
   },
 };

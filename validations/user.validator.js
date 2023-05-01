@@ -29,7 +29,7 @@ const UserValidator = {
         .withMessage("Favorite name should be a string"),
       body("favorites.*.url").isURL().withMessage("Invalid favorite URL"),
     ];
-  },
+  }
 };
 
 module.exports = UserValidator;

@@ -1,19 +1,13 @@
 require("dotenv").config();
-const baseResponse = require("../dto/baseResponse.dto");
+const BaseResponse = require("../dto/baseResponse.dto");
 const Song = require("../models/song.model");
 const { StatusCodes } = require("http-status-codes");
 const utils = require("../utils/index");
 const youtubeService = require('../services/youtube.service');
+const spotifyService = require('../services/spotify.service');
 
 exports.create = async (req, res) => {
   try {
-    const isInvalid = utils.helpers.handleValidation(req);
-    if (isInvalid) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ ...baseResponse, ...isInvalid });
-      return;
-    }
     const songName = req.body.name;
     const music = await youtubeService.searchMusicByName(songName);
     const newSong = new Song({
@@ -24,26 +18,33 @@ exports.create = async (req, res) => {
     });
 
     await newSong.save();
-    res.status(StatusCodes.OK).json({
-      ...baseResponse,
-      data: newSong,
-      success: true,
-      timestamp: Date.now(),
-      code: StatusCodes.OK,
-    });
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newSong));
   } catch (error) {
-    utils.helpers.logToError(
-      error,
-      req,
-      "Şarkı Ekleme İşleminde Hata Gerçekleşti"
-    );
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      ...baseResponse,
-      success: false,
-      error: true,
-      timestamp: Date.now(),
-      message: error.message,
-      code: StatusCodes.INTERNAL_SERVER_ERROR,
-    });
+    utils.helpers.logToError(error, req, "Şarkı Ekleme İşleminde Hata Gerçekleşti");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Şarkı Ekleme İşleminde Hata Gerçekleşti', error.message));
+  }
+};
+
+exports.search = async (req, res) => {
+  try {
+    const songName = req.body.name;
+    // const songs = await spotifyService.searchMusicByNameSpotify5(songName)
+    const songs = await youtubeService.searchMusicByName5(songName);
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, songs));
+  } catch (error) {
+    utils.helpers.logToError(error, req, "Şarkı Ekleme İşleminde Hata Gerçekleşti");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Şarkı Ekleme İşleminde Hata Gerçekleşti', error.message));
+  }
+};
+
+exports.searchPlaylist = async (req, res) => {
+  try {
+    const playlistId = req.body.playlistId;
+    
+    const songs = await youtubeService.getPlaylistItems(playlistId);
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, songs));
+  } catch (error) {
+    utils.helpers.logToError(error, req, "Şarkı Arama İşleminde Hata Gerçekleşti");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Şarkı Arama İşleminde Hata Gerçekleşti', error.message));
   }
 };

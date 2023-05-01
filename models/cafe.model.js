@@ -5,6 +5,15 @@ const cafeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
   location: {
     type: String,
     required: false,
@@ -31,10 +40,6 @@ const cafeSchema = new mongoose.Schema({
       vote: { type: Number ,default :0},
     },
   ],
-  qrCode: {
-    data: { type: Buffer, required: false },
-    contentType: { type: String, required: false }
-  },
   created: {
     type: Date,
     default: Date.now,

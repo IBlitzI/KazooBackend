@@ -1,6 +1,6 @@
 const utils = require("../utils/index");
 const { StatusCodes } = require("http-status-codes");
-const baseResponse = require("../dto/baseResponse.dto");
+const BaseResponse = require("../dto/baseResponse.dto");
 
 module.exports = (req, res, next) => {
   try {
@@ -10,16 +10,7 @@ module.exports = (req, res, next) => {
       if (decodedToken.decodedToken === null) {
         let error = new Error("Incorrect JWT Token");
         utils.helpers.logToError(error, req);
-        res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({
-            ...baseResponse,
-            success: false,
-            error: true,
-            timestamp: Date.now(),
-            message: error.message,
-            code: StatusCodes.UNAUTHORIZED,
-          });
+        res.status(StatusCodes.UNAUTHORIZED).send(BaseResponse.error(res.statusCode, 'UNAUTHORIZED', error.message));
         return;
       }
       req.user = decodedToken;
@@ -28,21 +19,8 @@ module.exports = (req, res, next) => {
     }
     next();
   } catch (error) {
-    utils.helpers.logToError(
-      error,
-      req,
-      "auth middleware işleminde hata gerçekleşti"
-    );
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({
-        ...baseResponse,
-        success: false,
-        error: true,
-        timestamp: Date.now(),
-        message: error.message,
-        code: StatusCodes.INTERNAL_SERVER_ERROR,
-      });
+    utils.helpers.logToError(error, req, "auth middleware işleminde hata gerçekleşti");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'AUTH MIDDLEWARE', error.message));
     return;
   }
 };

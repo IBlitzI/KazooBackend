@@ -37,15 +37,8 @@ const logToError = (error, req, message) => {
 const handleValidation = (req) => {
   const validationErrors = validationResult(req);
   if (validationErrors.isEmpty() === false) {
-    return {
-      message: "Geçersiz Veri",
-      success: false,
-      validationErrors: validationErrors.array(),
-      error: true,
-      timestamp: Date.now(),
-      code: StatusCodes.BAD_REQUEST,
-    };
-  }
+    return validationErrors.array()
+    }
   return null;
 };
 

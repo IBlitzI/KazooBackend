@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Kazoo Video Player</title>
+    <link rel="stylesheet" href="css/player.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="color: #fff">Kazoo Video Player</h1>
+      <div class="video-container">
+        <iframe
+          width="560"
+          height="315"
+          src=""
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="button-container">
+        <button onclick="goToPreviousVideo()">Önceki Video</button>
+        <button onclick="goToNextVideo()">Sonraki Video</button>
+      </div>
+    </div>
+    <div class="data-container">
+      <ul></ul>
+    </div>
+    <script src="data.js"></script>
+    <script>
+      
+      const cafeId =  document.cookie.split('=')[1]
+      let videoIds = ["eroWCJodVa8"];
+      let currentVideoIndex = 0;
+      let currentVideo = videoIds[currentVideoIndex];
+      document.querySelector("iframe").src =
+        "https://www.youtube.com/embed/" + currentVideo;
+
+      const url = "http://backend.kazooradio.com/vote/listall";
+      const data = { cafeId };
+      
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const container = document.querySelector(".data-container ul");
+          container.innerHTML = "";
+
+          data.forEach(function (item) {
+            // forEach yerine map kullan
+            const li = document.createElement("li");
+
+            const img = document.createElement("img");
+            img.src = item.song.thumbnail;
+            li.appendChild(img);
+
+            const name = document.createElement("span");
+            name.innerText = item.song.name;
+            li.appendChild(name);
+
+            const votes = document.createElement("span");
+            votes.innerText = item.votes;
+            li.appendChild(votes);
+
+            container.appendChild(li);
+            videoIds.push(item.song.videoId); // video ID'sini videoIds dizisine ekle
+          });
+        });
+
+
+        
+        const url2 ="http://localhost:5000/cafe/resetvote"
+
+      function goToNextVideo() {
+        const data2 ={
+          cafeId,videoId : currentVideo
+        }
+        fetch(url2, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data2),
+        })
+          .then((response) => response.json())
+        currentVideoIndex = (currentVideoIndex + 1) % videoIds.length;
+        currentVideo = videoIds[currentVideoIndex];
+        videoIds = [];
+        document.querySelector("iframe").src =
+          "https://www.youtube.com/embed/" + currentVideo;
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const container = document.querySelector(".data-container ul");
+            container.innerHTML = "";
+
+            data.forEach(function (item) {
+              // forEach yerine map kullan
+              const li = document.createElement("li");
+
+              const img = document.createElement("img");
+              img.src = item.song.thumbnail;
+              li.appendChild(img);
+
+              const name = document.createElement("span");
+              name.innerText = item.song.name;
+              li.appendChild(name);
+
+              const votes = document.createElement("span");
+              votes.innerText = item.votes;
+              li.appendChild(votes);
+
+              container.appendChild(li);
+              videoIds.push(item.song.videoId); // video ID'sini videoIds dizisine ekle
+            });
+          });
+      }
+
+      function goToPreviousVideo() {
+        console.log(videoIds);
+        currentVideoIndex--;
+        if (currentVideoIndex < 0) {
+          currentVideoIndex = videoIds.length - 1;
+        }
+        currentVideo = videoIds[currentVideoIndex];
+        document.querySelector("iframe").src =
+          "https://www.youtube.com/embed/" + currentVideo;
+      }
+
+    </script>
+  </body>
+</html>

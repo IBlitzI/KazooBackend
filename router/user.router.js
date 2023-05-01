@@ -5,9 +5,23 @@ const validator = require("../validations/user.validator");
 const middlewares = require("../middlewares/index");
 
 router.post("/create", [validator.validateUser()], controller.create);
-router.post("/login", [middlewares.loggerMiddleware], controller.login);
+router.post("/login", controller.login);
 router.delete("/logout", controller.logout);
 
 module.exports = {
-  userRouter: router
+  userRouter: router,
 };
+
+
+router.post("/users", async (req, res) => {
+  const {userId,updates} = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+      new: true,
+    });
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
