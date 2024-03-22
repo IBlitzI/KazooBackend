@@ -23,21 +23,39 @@ const searchMusicByName = async (query) => {
   };
   
   const searchMusicByName5 = async (query) => {
-    const res = await youtubes.search.list({
-      part: 'snippet',
-      type: 'video',
-      q: query,
-      maxResults :5
-    });
-  
-    return res.data.items.map(item => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      description: item.snippet.description,
-      thumbnail: item.snippet.thumbnails.default.url,
-      videoUrl : `https://www.youtube.com/watch?v=${item.id.videoId}`
-    }));
+    try {
+      const res = await youtubes.search.list({
+        part: 'snippet',
+        type: 'video',
+        q: query,
+        maxResults: 5
+      });
+      
+      if (
+        res &&
+        res.data &&
+        res.data.items &&
+        res.data.items.length > 0
+      ) {
+        // Yalnızca video türünde olan sonuçları işle
+        const videoResults = res.data.items.filter(item => item.id.kind === 'youtube#video');
+        console.log(videoResults)
+        return videoResults.map(item => ({
+          id: item.id.videoId,
+          title: item.snippet.title,
+          description: item.snippet.description,
+          thumbnail: item.snippet.thumbnails.default.url,
+          videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`
+        }));
+      } else {
+        throw new Error('Şarkı bulunamadı');
+      }
+    } catch (error) {
+      console.error('Hata:', error);
+      throw error;
+    }
   };
+  
 
   const searchMusicById = async (id) => {
     const res = await youtubes.videos.list({
@@ -74,6 +92,7 @@ const searchMusicByName = async (query) => {
   });
     return songTitles;
   }
+  
 
 
   module.exports = {

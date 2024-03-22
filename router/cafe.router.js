@@ -17,6 +17,9 @@ router.post("/resetvote", controller.resetVote);
 router.get('/login', (req, res) => {
   res.render('login');
 });
+router.get('/getcafe', controller.getcafe);
+router.put('/upgrademenu', controller.upgradeMenu);
+
 router.post('/login', controller.login);
 router.get('/signup', (req, res) => {
   res.render('signup');

@@ -123,3 +123,26 @@ exports.getcafe = async(req,res) =>{
     console.error(error);
   }
 }
+exports.upgradeMenu = async (req, res) => {
+  try {
+    // Cafe ID'sini isteğin params'ından al
+    const { cafeId } = req.body;
+    
+    // Güncellenecek menüyü istek gövdesinden al
+    const updatedMenu = req.body.menu;
+
+    // Cafe'yi veritabanından bul ve güncellenmiş menüyü ayarla
+    const cafe = await Cafe.findByIdAndUpdate(cafeId, { menu: updatedMenu }, { new: true });
+
+    // Cafe bulunamazsa hata gönder
+    if (!cafe) {
+      return res.status(StatusCodes.NOT_FOUND).json(BaseResponse.error(res.statusCode, 'Cafe not found'));
+    }
+
+    // Başarıyla güncellenmiş cafe'yi gönder
+    res.status(StatusCodes.OK).json(BaseResponse.success(res.statusCode, 'Menu upgraded', cafe));
+  } catch (error) {
+    // Hata oluşursa hata mesajı gönder
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(BaseResponse.error(res.statusCode, 'Error upgrading menu', error.message));
+  }
+};
