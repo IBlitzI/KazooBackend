@@ -31,6 +31,20 @@ exports.create = async (req, res) => {
   }
 };
 
+// exports.addCemil = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.body.userId);
+//     const cemil = req.body.cemil
+    
+//     user.cemil = cemil
+//     res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newUser));
+//   } catch (error) {
+//     utils.helpers.logToError(error, req, "register işleminde hata oluştu");
+//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Kullanıcı eklenemedi', error.message));
+//   }
+// };
+
+
 exports.login = async (req, res) => {
   try {
     const isInvalid = utils.helpers.handleValidation(req);

@@ -20,15 +20,6 @@ router.get('/login', (req, res) => {
 router.get('/getcafe', controller.getcafe);
 router.put('/upgrademenu', controller.upgradeMenu);
 
-router.post('/login', controller.login);
-router.get('/signup', (req, res) => {
-  res.render('signup');
-});
-router.post('/signup', controller.create);
-
-router.get('/player', (req, res) => {
-  res.render('player');
-});
 
 
 

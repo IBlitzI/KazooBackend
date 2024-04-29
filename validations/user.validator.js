@@ -23,11 +23,6 @@ const UserValidator = {
         .withMessage("Password is required")
         .isLength({ min: 8 })
         .withMessage("Password should be at least 8 characters"),
-      body("favorites").isArray().withMessage("Favorites should be an array"),
-      body("favorites.*.name")
-        .isString()
-        .withMessage("Favorite name should be a string"),
-      body("favorites.*.url").isURL().withMessage("Invalid favorite URL"),
     ];
   }
 };

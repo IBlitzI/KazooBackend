@@ -14,11 +14,11 @@ exports.vote = async function voteForSong(req, res) {
       res.status(StatusCodes.BAD_REQUEST).send(BaseResponse.error(res.statusCode, 'Aktif Kafe veya Kullanıcı Bulunamadı', error.message));
       return;
     }
-  
+
     votedSong = cafe.votes.findIndex(
       (vote) => vote.song.toString() === req.body.songId
     );
-    
+
     if (votedSong !== -1) {
       votedUser = cafe.votes[votedSong].user.findIndex(
         (user) => user._id.toString() === req.body.userId
@@ -29,10 +29,16 @@ exports.vote = async function voteForSong(req, res) {
         user.vote += 1;
 
       } else {
-        let error = new Error("Kullanıcı Zaten Oy Vermiş");
-        utils.helpers.logToError(error, req, "Şarkı Oy Vermede Kullanıcı Zaten Oy Vermiş");
-        res.status(StatusCodes.BAD_REQUEST).send(BaseResponse.error(res.statusCode, 'Kullanıcı Oy Vermiş', error.message));
-        return;
+        if (user.cemil > 0) {
+          cafe.votes[votedSong].user.push(req.body.userId);
+          cafe.votes[votedSong].vote++;
+          user.vote += 1;
+        } else {
+          let error = new Error("Kullanıcı Zaten Oy Vermiş");
+          utils.helpers.logToError(error, req, "Şarkı Oy Vermede Kullanıcı Zaten Oy Vermiş");
+          res.status(StatusCodes.BAD_REQUEST).send(BaseResponse.error(res.statusCode, 'Kullanıcı Oy Vermiş', error.message));
+          return;
+        }
       }
     } else {
       cafe.votes.push({
@@ -51,7 +57,7 @@ exports.vote = async function voteForSong(req, res) {
 };
 
 
-exports.listAllSongsByVotes = async function(req, res) {
+exports.listAllSongsByVotes = async function (req, res) {
   const cafeId = req.body.cafeId;
   try {
     const cafe = await Cafe.findById(cafeId).populate("votes.song").exec();

@@ -29,13 +29,9 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  favorites: [
-    {
-      name: String,
-      url: String,
-      
-    },
-  ],
+  cemil: {
+    type: Number
+  },
   vote:{
     type: Number,
     default: 0

@@ -21,6 +21,7 @@ const cafeSchema = new mongoose.Schema({
   rating: {
     type: Number,
     default: 0,
+    required: false
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

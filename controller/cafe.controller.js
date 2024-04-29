@@ -12,7 +12,7 @@ exports.create = async (req, res) => {
     const isInvalid = utils.helpers.handleValidation(req);
     if (isInvalid) {
       res.status(StatusCodes.BAD_REQUEST).send(BaseResponse.error(res.statusCode, 'Validation error', isInvalid));
-      return; 
+      return;
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -29,15 +29,11 @@ exports.create = async (req, res) => {
     //});
     await newCafe.save();
 
-    res.redirect('login');
-
-    // res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newCafe.id));
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newCafe.id));
   } catch (error) {
     utils.helpers.logToError(
       error, req, "Cafe Ekleme İşleminde Hata Gerçekleşti");
-      res.redirect('signup');
-
-    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Cafe Eklenemedi', error.message));
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Cafe Eklenemedi', error.message));
   }
 };
 
@@ -57,7 +53,7 @@ exports.addSongToPlaylist = async (req, res) => {
       vote: 0,
     });
     await cafe.save();
-    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, {message : "Şarkı Başarıyla Eklendi"}));
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, { message: "Şarkı Başarıyla Eklendi" }));
 
   } catch (error) {
     utils.helpers.logToError(error, req, "Şarkı Ekleme İşleminde Hata Gerçekleşti");
@@ -77,32 +73,27 @@ exports.login = async (req, res) => {
       req.body.password,
       cafe.password
     );
-    
-    
+
+
     if (!cafe && !passwordMatch) {
       let error = new Error("Incorrect Username or Password");
       utils.helpers.logToError(error, req);
-      res.redirect('login');
-      // res.status(StatusCodes.UNAUTHORIZED).send(BaseResponse.error(res.statusCode, 'Giriş Yapılamadı', error.message));
-      // return;
+      res.status(StatusCodes.UNAUTHORIZED).send(BaseResponse.error(res.statusCode, 'Giriş Yapılamadı', error.message));
+       return;
     }
-    res.cookie(`id`,cafe.id);
-    res.redirect('player');
-    // res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode));
+     res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode));
   } catch (error) {
     utils.helpers.logToError(error, req, "Cafe login işleminde hata gerçekleşti");
-    res.redirect('login');
-
-    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Giriş Yaparken Hata Oluştu', error.message));
+     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Giriş Yaparken Hata Oluştu', error.message));
   }
 };
 
-exports.resetVote = async(req,res) =>{
+exports.resetVote = async (req, res) => {
   try {
     const cafe = await Cafe.findById(req.body.cafeId);
-    
+
     const song = await Song.findOne({ videoId: req.body.videoId });
-    
+
     const votes = cafe.votes.filter(vote => vote.song.equals(song._id));
     votes.forEach(vote => {
       vote.vote = 0;
@@ -112,13 +103,15 @@ exports.resetVote = async(req,res) =>{
     console.error(err);
   }
 }
-exports.getcafe = async(req,res) =>{
+exports.getcafe = async (req, res) => {
   try {
-    const cafes = await Cafe.find({}, { name: 1, image: 1 });
-    return cafes.map(cafe => ({
+    const cafes = await Cafe.find({}, { name: 1});
+    const data = cafes.map(cafe => ({
       name: cafe.name,
-      image: cafe.image && cafe.image.data.toString('base64')
+      // image: cafe.image && cafe.image.data.toString('base64'),
+      // location:cafe.location
     }));
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode,data));
   } catch (error) {
     console.error(error);
   }
@@ -127,7 +120,7 @@ exports.upgradeMenu = async (req, res) => {
   try {
     // Cafe ID'sini isteğin params'ından al
     const { cafeId } = req.body;
-    
+
     // Güncellenecek menüyü istek gövdesinden al
     const updatedMenu = req.body.menu;
 
