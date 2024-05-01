@@ -29,7 +29,7 @@ exports.vote = async function voteForSong(req, res) {
         user.vote += 1;
 
       } else {
-        if (user.cemil > 0) {
+        if (user.token > 0) {
           cafe.votes[votedSong].user.push(req.body.userId);
           cafe.votes[votedSong].vote++;
           user.vote += 1;

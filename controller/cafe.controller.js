@@ -16,17 +16,18 @@ exports.create = async (req, res) => {
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    //const cafeImage = req.file.buffer;
+    const cafeImage = req.file.buffer;
     const newCafe = new Cafe({
       username: req.body.username,
       password: hashedPassword,
       name: req.body.cafeName,
-      //image: { data: cafeImage, contentType: req.file.mimetype },
+      location: req.body.location,
+      image: { data: cafeImage, contentType: req.file.mimetype },
     });
-    //const votesArr = JSON.parse(req.body.playlist);
-    //votesArr.forEach(async (song) => {
-    //  newCafe.votes.push({ user: [], song, vote: 0 });
-    //});
+    // const votesArr = JSON.parse(req.body.playlist);
+    // votesArr.forEach(async (song) => {
+    //   newCafe.votes.push({ user: [], song, vote: 0 });
+    // });
     await newCafe.save();
 
     res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newCafe.id));

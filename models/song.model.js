@@ -4,6 +4,7 @@ const songSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    
   },
   artist: {
     type: String,
@@ -12,6 +13,7 @@ const songSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true,
+    unique :true
   },
   thumbnail: {
     type: String,

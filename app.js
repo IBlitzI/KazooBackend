@@ -1,13 +1,13 @@
 const express = require("express");
 const router = require('./router/index');
-//const cors = require('cors');
+const cors = require('cors');
 //const ejs = require('ejs');
 const bodyParser = require('body-parser');
 //const cookieParser = require('cookie-parser')
 
 // const authMiddleware = require('./middlewares/auth.middleware')
 const app = express();
-//app.use(cors())
+app.use(cors())
 
 app.use(express.json());
 app.set('view engine', 'ejs');
