@@ -16,7 +16,7 @@ app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/hello', (req,res) => {
-  res.send('Kazoo Backend Çalışıyor')
+  res.send('Melodine Backend Çalışıyor')
 })
 
 // app.use(authMiddleware)

@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 const BaseResponse = require("../dto/baseResponse.dto");
 
-exports.create = async (req, res) => {
+exports.localCreate = async (req, res) => {
   try {
     const isInvalid = utils.helpers.handleValidation(req);
     if (isInvalid) {
@@ -22,6 +22,7 @@ exports.create = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPassword,
+      authProvider:"local"
     });
     const newUser = await user.save();
     res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, newUser));
@@ -53,7 +54,7 @@ exports.login = async (req, res) => {
       return;
     }
 
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username, authProvider:"local" });
     const passwordMatch = await bcrypt.compare(
       req.body.password,
       user.password
@@ -75,6 +76,42 @@ exports.login = async (req, res) => {
   } catch (error) {
     utils.helpers.logToError(error, req, "login işleminde hata gerçekleşti");
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Giriş Yaparken Hata Oluştu', error.message));
+  }
+};
+exports.googleLogin = async (req, res) => {
+  try {
+    const isInvalid = utils.helpers.handleValidation(req);
+    if (isInvalid) {
+      res.status(StatusCodes.BAD_REQUEST).send(BaseResponse.error(res.statusCode, 'Validation error', isInvalid));
+      return;
+    }
+
+    const { googleId, email, firstName, lastName } = req.body;
+
+    let user = await User.findOne({ email, authProvider: 'google' });
+
+    if (!user) {
+      user = new User({
+        username: googleId,
+        firstName,
+        lastName,
+        email,
+        authProvider: 'google'
+      });
+
+      await user.save();
+    }
+
+    const tokenUser = { username: user.username };
+    const accessToken = utils.helpers.createToken(tokenUser);
+    const refreshToken = jwt.sign(tokenUser, process.env.REFRESH_SECRET_KEY);
+    const refreshTokenDB = new RefreshToken({ token: refreshToken });
+    await refreshTokenDB.save();
+
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, { refreshToken, accessToken }));
+  } catch (error) {
+    utils.helpers.logToError(error, req, "Google login işleminde hata gerçekleşti");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Google ile giriş yaparken hata oluştu', error.message));
   }
 };
 

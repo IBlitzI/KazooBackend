@@ -23,7 +23,7 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    
   },
   created: {
     type: Date,
@@ -35,6 +35,12 @@ const userSchema = new Schema({
   vote:{
     type: Number,
     default: 0
+  },
+  authProvider: {
+    type: String,
+    required: true,
+    enum: ['local', 'google'],
+    default: 'local'
   }
 });
 const User = mongoose.model("User", userSchema, "User");
