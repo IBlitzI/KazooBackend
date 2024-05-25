@@ -4,7 +4,7 @@ const controller = require("../controller/user.controller");
 const validator = require("../validations/user.validator");
 const middlewares = require("../middlewares/index");
 
-router.post("/localcreate", [validator.validateUser()], controller.create);
+router.post("/localcreate", [validator.validateUser()], controller.localCreate);
 router.post("/googlelogin",controller.googleLogin);
 router.post("/login", controller.login);
 router.delete("/logout", controller.logout);
