@@ -106,17 +106,15 @@ exports.resetVote = async (req, res) => {
 }
 exports.getcafe = async (req, res) => {
   try {
-    const cafes = await Cafe.find({}, { name: 1});
-    const data = cafes.map(cafe => ({
-      name: cafe.name,
-      // image: cafe.image && cafe.image.data.toString('base64'),
-      // location:cafe.location
-    }));
-    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode,data));
+    const cafes = await Cafe.find({}, { _id: 1, name: 1, location: 1 });
+    utils.helpers.logToError(cafes,req,"cafeverileri başarıyla geldi")    
+    res.status(StatusCodes.OK).send(BaseResponse.success(res.statusCode, cafes));
   } catch (error) {
-    console.error(error);
+    utils.helpers.logToError(error, req, "Cafe verilerini getirirken bir hata oluştu");
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(BaseResponse.error(res.statusCode, 'Cafe verileri alınamadı', error.message));
   }
-}
+};
+
 exports.upgradeMenu = async (req, res) => {
   try {
     // Cafe ID'sini isteğin params'ından al
